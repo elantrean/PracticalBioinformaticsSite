@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+    @import "nav.css";
+    h1 {
+        text-align: center;
+        background-color: #c0c0c0;
+    }
+    #tickLabel{
+        font-size: 20px;
+        font-weight: bold;
+        font-family: sans-serif;
+        color: #000000;
+        background-color: #cbcbcb;
+    }
+</style>
+<script>
+    async function MyBlast() {
+        // const program = document.getElementById('program').value;
+        // const database = document.getElementById('db').value;
+        // const query = document.getElementById('query').value;
+        let RID = '';
+        let RTOE = '';
+        const url = 'http://blast.ncbi.nlm.nih.gov/blast/Blast.cgi';
+        const urlTotal = url+`?CMD=Put&PROGRAM=blastp&DATABASE=nr&QUERY=MVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVAGVANALAHKYHD`;
+        let startTime = new Date().getTime()
+        let currentTime;
+        fetch(urlTotal, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+        })
+            .then(response => response.text())
+            .then(result => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(result, 'text/html');
+                RID = doc.querySelector("#rid").value;
+                RTOE = result.match(/^    RTOE = (.*$)/m)[1];
+                console.log(`Blast work ID is: ${RID}`)
+                console.log(`Expected waiting time: ${RTOE}`);
+                document.getElementById('expectTime').innerHTML = `Expected waiting time: ${RTOE}`;
+                let pollInterval = setInterval(() => {
+                    fetch(`${url}?CMD=Get&FORMAT_OBJECT=SearchInfo&RID=${RID}`)
+                        .then(response => response.text())
+                        .then(data => {
+                            currentTime = new Date().getTime();
+                            let difference = (currentTime - startTime)/1000;
+                            let m = Math.floor(difference)
+                            let mm = m % 60
+                            let f = Math.floor(m / 60)
+                            let ff = f % 60
+                            document.getElementById('tickLabel').innerHTML = `${ff} min${mm} sec`;
+                            if (data.match(/^\s+Status=WAITING$/m)) {
+                                console.log('Searching...');
+                            } else if (data.match(/^\s+Status=FAILED$/m)) {
+                                console.error(`Search ${RID} failed; please report to blast-help@ncbi.nlm.nih.gov.`);
+                                clearInterval(pollInterval);
+                            } else if (data.match(/^\s+Status=UNKNOWN$/m)) {
+                                console.error(`Search ${rid} expired.`);
+                                clearInterval(pollInterval);
+                            } else if (data.match(/^\s+Status=READY$/m) && data.match(/^\s+ThereAreHits=yes$/m)) {
+                                clearInterval(pollInterval);
+                                // clearInterval(ticker);
+                                fetch(`${url}?CMD=Get&FORMAT_TYPE=Text&RID=${RID}`)
+                                    .then(response => response.text())
+                                    .then(data => {
+                                        console.log(data);
+                                        document.getElementById('blastResult').innerHTML = data;
+                                    });
+                            } else if (data.match(/^\s+Status=READY$/m)) {
+                                console.log('No hits found.');
+                                clearInterval(pollInterval);
+                            } else {
+                                console.error('Something unexpected happened.');
+                                clearInterval(pollInterval);
+                            }
+                        });
+                }, 5000);
+            })
+            .catch(error => console.error(error));
+
+    }
+</script>
+<head>
+    <meta charset="UTF-8">
+    <title>CDove's Bioinformatics site</title>
+</head>
+<body>
+<h1>CDove's bioinformatics site</h1>
+<!-- navigation bar -->
+<ul id="nav">
+    <li><a href="index.html">Blast</a></li>
+    <li><a href="database.html">Database</a></li>
+    <li><a href="databaseWithGlimpse.php">Search</a></li>
+</ul>
+<div style="text-align: center;">
+<form action="index.php" method="post" id="testCon">
+    <input type="submit" name = 'submit' value='Test Connection'>
+</form>
+</div>
+<fieldset>
+    <legend>BLAST</legend>
+<form>
+    <label for="query">query</label><input type="text" name="query" id="query"/>
+    <label for="db">database</label><input type="text" name="database" id="db"/>
+    <label for="program">program</label><input type="text" name="program" id="program"/>
+    <button type="button" onclick="MyBlast()">Call Blast</button>
+    <label id="expectTime"></label>
+    <label id="tickLabel">Counter from 0 s</label>
+</form>
+</fieldset>
+<label>Blast Result⬇️</label>
+<div id="blastResult"></div>
+</body>
+</html>

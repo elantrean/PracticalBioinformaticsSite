@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<style>
+    @import "nav.css";
+</style>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Database Operate</title>
+</head>
+<body>
+<script src="databaseDisplay.php"></script>
+<script>
+    function show(){document.getElementById("geneTableSize").innerHTML = geneTableSize;
+        document.getElementById("centralTableSize").innerHTML = centralTableSize;
+        document.getElementById("proteinTableSize").innerHTML = proteinTableSize;
+    }
+    </script>
+<ul id="nav">
+    <li><a href="index.html">Blast</a></li>
+    <li><a href="database.html">Database</a></li>
+    <li><a href="databaseWithGlimpse.php">Search</a></li>
+</ul>
+<form action="database.php" method="post" target=database>
+    Gene ID: <label>
+    <input type="text" name="gene_id"/>
+    <input type="submit" name = "search" value="Search"/>
+    <input type="submit" name = "delete" value="Delete"/>
+</label><BR>
+    Sequence (Ensembl)<label>
+    <input type="text" name="gene_seq"/>
+</label><BR>
+    Chromosome <label>
+    <input type="text" name="gene_chr"/>
+</label><BR>
+    Start Position <label>
+    <input type="text" name="gene_start"/>
+</label><BR>
+    End Position <label>
+    <input type="text" name="gene_end"/>
+</label><BR>
+    Strand <label>
+    <select name="direction">
+        <option value="+" selected>forward strand</option>
+        <option value="-" >reverse strand</option>
+    </select>
+    <input type="submit" name = "submit" value="Insert/Update"/>
+
+</label><BR>
+</form>
+<fieldset>
+    <legend>database state</legend>
+    Organ: human<br>
+    Protein table: from the first 100 protein in UniprotKB reviewed(Unsearchable)<br>
+    Central table: from gene get the correspondent protein(Unsearchable)<br>
+    Gene table: the annotation file of Ensembl<br>
+    <button onclick="show()">What is the size of tables</button>
+    <div style="text-align: center;" id="databaseDisplay">
+        <table>
+            <tr>
+                <th>gene_table size</th>
+                <th>central_table size</th>
+                <th>protein_table size</th>
+            </tr>
+            <tr>
+                <th><label id="geneTableSize">-</label></th>
+                <th><label id="centralTableSize">-</label></th>
+                <th><label id="proteinTableSize">-</label></th>
+            </tr>
+        </table>
+    </div>
+</fieldset>
+</body>
+</html>
