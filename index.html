@@ -102,18 +102,24 @@
 <fieldset>
     <legend>BLAST</legend>
 <form>
-    <label for="query">query</label><input type="text" onFocus="if(value==defaultValue){value='';this.style.color='#000'}" onBlur="if(!value){value=defaultValue; this.style.color='#999'}" style="color:#999" name="query" id="query" value="MVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVAGVANALAHKYHD"/>
+    <label for="query">query<br></label>
+    <textarea rows="10" cols="30" 
+    onFocus="if(value==defaultValue){this.style.color='#000'}" 
+    onBlur="if(!value){value=defaultValue; this.style.color='#999'}" 
+    style="color:#999" name="query" id="query">MVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVAGVANALAHKYHD</textarea><br>
     <label>database
         <select id="db">
             <option value="nr" selected>non redundant protein sequences(nr)</option>
             <option value="nt" >Nucleotide collection(nr/nt)</option>
         </select>
+        <br>
     </label>
-    <label>program
+    <label>program, where program = megablast, blastn, blastp, rpsblast, blastx, tblastn, tblastx
         <select id="program">
             <option value="blastp" selected>blast protein</option>
             <option value="blastn" >blast nucleotide</option>
         </select>
+        <br>
     </label>
     <button type="button" onclick="MyBlast()">Call Blast</button>
     <label id="expectTime"></label>
