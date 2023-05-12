@@ -16,13 +16,13 @@
 </style>
 <script>
     async function MyBlast() {
-        // const program = document.getElementById('program').value;
-        // const database = document.getElementById('db').value;
-        // const query = document.getElementById('query').value;
+        const program = document.getElementById('program').value;
+        const database = document.getElementById('db').value;
+        const query = document.getElementById('query').value;
         let RID = '';
         let RTOE = '';
         const url = 'http://blast.ncbi.nlm.nih.gov/blast/Blast.cgi';
-        const urlTotal = url+`?CMD=Put&PROGRAM=blastp&DATABASE=nr&QUERY=MVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVAGVANALAHKYHD`;
+        const urlTotal = url+`?CMD=Put&PROGRAM=${program}&DATABASE=${database}&QUERY=${query}`;
         let startTime = new Date().getTime()
         let currentTime;
         fetch(urlTotal, {
@@ -102,9 +102,19 @@
 <fieldset>
     <legend>BLAST</legend>
 <form>
-    <label for="query">query</label><input type="text" name="query" id="query"/>
-    <label for="db">database</label><input type="text" name="database" id="db"/>
-    <label for="program">program</label><input type="text" name="program" id="program"/>
+    <label for="query">query</label><input type="text" onFocus="if(value==defaultValue){value='';this.style.color='#000'}" onBlur="if(!value){value=defaultValue; this.style.color='#999'}" style="color:#999" name="query" id="query" value="MVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVAGVANALAHKYHD"/>
+    <label>database
+        <select id="db">
+            <option value="nr" selected>non redundant protein sequences(nr)</option>
+            <option value="nt" >Nucleotide collection(nr/nt)</option>
+        </select>
+    </label>
+    <label>program
+        <select id="program">
+            <option value="blastp" selected>blast protein</option>
+            <option value="blastn" >blast nucleotide</option>
+        </select>
+    </label>
     <button type="button" onclick="MyBlast()">Call Blast</button>
     <label id="expectTime"></label>
     <label id="tickLabel">Counter from 0 s</label>
