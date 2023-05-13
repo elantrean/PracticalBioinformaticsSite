@@ -12,6 +12,7 @@
     <li><a href="index.html">Blast</a></li>
     <li><a href="database.html">Database</a></li>
     <li><a href="databaseWithGlimpse.php">Search</a></li>
+    <li><a href="documentation.html">Documentation</a></li>
 </ul>
 <form action="databaseWithGlimpse.php" method="get">
     Gene id: <label>
